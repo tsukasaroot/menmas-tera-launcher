@@ -6,7 +6,7 @@ const https = require('https');
 const retry = require('retry');
 
 const MAX_DOWNLOAD_SPEED_VALUES = 10;
-const PATCH_URL = 'http://patch.menmastera.com';
+const PATCH_URL = 'http://api.digitalsavior.fr';
 
 let patchProgressUpdate;
 let downloadedFiles = {};
@@ -207,7 +207,7 @@ function getLatestBuildVersion() {
 
 function getLatestBuildInfo() {
     return new Promise((resolve, reject) => {
-        axios.get(PATCH_URL + '/latest/download')
+        axios.get(PATCH_URL + '/download')
         .then((response) => {
             if(response.status === 200) {
                 resolve(response.data);
