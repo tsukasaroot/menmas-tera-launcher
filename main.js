@@ -8,7 +8,7 @@ const tl = require('./launcher');
 const TeraProxy = require(path.join(process.cwd(), 'proxy/bin/proxy'));
 const patcher = require('./patcher');
 
-const KEYTAR_SERVICE_NAME = "MenmasTeraLauncherUwU";
+const KEYTAR_SERVICE_NAME = "islanstera";
 
 let MessageListener;
 let loginData;

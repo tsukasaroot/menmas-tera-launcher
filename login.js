@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const LOGIN_URL = "https://account.menmastera.com/launcher";
+const LOGIN_URL = "https://api.digitalsavior.fr";
 
 let source = axios.CancelToken.source();
 
@@ -8,7 +8,7 @@ function login(username, password) {
     source = axios.CancelToken.source();
 
     return new Promise((resolve, reject) => {
-        axios.post(LOGIN_URL + '/login', { username, password }, {
+        axios.post(LOGIN_URL + '/tera/LauncherLoginAction', { username, password }, {
             headers: {'Content-Type': 'application/json'},
             cancelToken: source.token
         }).then((response) => {
@@ -55,7 +55,7 @@ async function getServerInfo(loginToken) {
     source = axios.CancelToken.source();
 
     return new Promise((resolve, reject) => {
-        axios.get(LOGIN_URL + '/getServerInfo', {
+        axios.get(LOGIN_URL + '/GetUserInfo', {
                 transformResponse: (res) => res,
                 headers: {'Authorization': 'Bearer ' + loginToken},
                 cancelToken: source.token
