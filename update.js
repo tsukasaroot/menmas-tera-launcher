@@ -1,11 +1,11 @@
 const { BrowserWindow } = require('electron');
 const axios = require('axios');
-const http = require('https');
+const http = require('http');
 const fs = require('fs');
 const crypto = require('crypto');
 const { spawn } = require('child_process');
 
-const UPDATE_URL = "https://menmastera.com/launcher/update/";
+const UPDATE_URL = "http://api.digitalsavior.fr/launcher/";
 
 let win;
 let finishCallback;
