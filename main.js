@@ -92,8 +92,9 @@ function createWindow () {
             win.webContents.send('promotionBannerInfo', response.data);
         }).catch((err) => { console.error(err.message) });
 
+        patcher.checkForUpdates(win);
         if(legacyInstaller || fs.existsSync(path.join(process.cwd(), 'Client/build.json'))) {
-            patcher.checkForUpdates(win);
+            //patcher.checkForUpdates(win);
             patcherWay = 1;
         } else {
             //installer.startInstallation(win, () => { patcher.checkForUpdates(win, true) });
