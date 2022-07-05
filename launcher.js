@@ -1,6 +1,6 @@
 const ffi = require('ffi-napi');
 
-const SLS_URL = "https://tera.digitalsavior.fr/server/serverlist.xml";
+const SLS_URL = "http://tera.digitalsavior.fr/server/serverlist.uk";
 
 const teraLauncher = ffi.Library('./Teralauncher.dll', {
     'LaunchGame': [

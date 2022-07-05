@@ -5,17 +5,19 @@ const path = require('path');
 const axios = require('axios');
 const loginController = require('./login');
 const tl = require('./launcher');
-const TeraProxy = require(path.join(process.cwd(), 'proxy/bin/proxy'));
+//const TeraProxy = require(path.join(process.cwd(), 'proxy/bin/proxy'));
 const patcher = require('./patcher');
+const installer = require('./installer');
 
-const KEYTAR_SERVICE_NAME = "islanstera";
+const KEYTAR_SERVICE_NAME = "islanlauncher";
 
 let MessageListener;
 let loginData;
 let gameStr;
-
+let patcherWay = 0;
 let win;
 let proxy;
+let legacyInstaller = (process.argv.includes("--MT_LEGACY_INSTALLER"));
 
 function createWindow () {
     win = new BrowserWindow({
@@ -41,8 +43,10 @@ function createWindow () {
             case "ticket": {
                 loginController.getServerInfo(loginData.token).then((data) => {
                     gameStr = data;
+                    console.log(gameStr)
                     tl.sendMessageToClient('ticket', `{"ticket": "${JSON.parse(gameStr).ticket}", "result-code": 200}`);
                 }).catch((err) => {
+                    console.log(err + ' killed')
                     tl.sendMessageToClient('ticket', '{"result-code": 0, "result-message": "No handler"}');
                 });
                 break;
@@ -88,7 +92,13 @@ function createWindow () {
             win.webContents.send('promotionBannerInfo', response.data);
         }).catch((err) => { console.error(err.message) });
 
-        patcher.checkForUpdates(win);
+        if(legacyInstaller || fs.existsSync(path.join(process.cwd(), 'Client/build.json'))) {
+            patcher.checkForUpdates(win);
+            patcherWay = 1;
+        } else {
+            //installer.startInstallation(win, () => { patcher.checkForUpdates(win, true) });
+            //patcherWay = 2;
+        }
     });
 
     // Redirect console to built-in one
@@ -163,18 +173,9 @@ ipcMain.on('abort-login-req', (event) => {
     loginController.cancelAllRequests();
 });
 
-ipcMain.on('launchGame', async (event, startVulkan) => {
+ipcMain.on('launchGame', async (event) => {
     try {
         gameStr = await loginController.getServerInfo(loginData.token);
-
-        let vulkanPathEnabled = path.join(process.cwd(), 'Client/Binaries/d3d9.dll');
-        let vulkanPathDisabled = path.join(process.cwd(), 'Client/Binaries/d3d9.dis');
-
-        if(startVulkan && !fs.existsSync(vulkanPathEnabled))
-            fs.renameSync(vulkanPathDisabled, vulkanPathEnabled);
-        else if(!startVulkan && !fs.existsSync(vulkanPathDisabled)) {
-            fs.renameSync(vulkanPathEnabled, vulkanPathDisabled);
-        }
 
         event.reply('launchGameRes', null);
 
@@ -188,10 +189,13 @@ ipcMain.on('launchGame', async (event, startVulkan) => {
 });
 
 ipcMain.on('patch-paused-state', (event, paused) => {
-    if(paused)
-        patcher.pauseDownload();
-    else
-        patcher.downloadFiles(win);
+    if(paused) {
+        if(patcherWay == 1) patcher.pauseDownload();
+        else if(patcherWay == 2) installer.pauseDownload();
+    } else {
+        if(patcherWay == 1) patcher.downloadFiles(win);
+        else if(patcherWay == 2) installer.startInstallation(win, () => { patcher.checkForUpdates(win, true) });
+    }
 });
 
 ipcMain.on('repair-client', (event) => {

@@ -33,9 +33,6 @@
         </div>
         <div class="launch-game">
             <button id="launchGame">Play</button>
-            <label style="position: absolute;bottom: 5px;left: 20px;right: 0;width: calc(100% - 20px);text-align: center;">
-                <input type="checkbox" id="startVulkan" style="margin: 3px"> Start with Vulkan (Beta) <span title="Vulkan is intended to offer higher performance and more balanced CPU and GPU usage.">(?)</span>
-            </label>
         </div>
     </footer>
     <div>
@@ -133,7 +130,7 @@
                     e.target.classList.add('disabled');
                     ipcRenderer.send('patch-paused-state', !patchingPaused);
                     return;
-                }
+                } 
 
                 showLoginModal();
 
@@ -336,7 +333,7 @@
             let errorMsg = document.getElementById('loginErrorMsg');
 
             if(submitLogin.classList.contains('disabled')) return;
-
+            
             errorMsg.innerHTML = "";
             submitLogin.classList.add('disabled');
             loadingIcon.style.display = "initial";
@@ -369,13 +366,12 @@
             let submitLogin = document.getElementById('submitLogin');
             let loadingIcon = document.getElementById('loadingIcon');
             let errorMsg = document.getElementById('loginErrorMsg');
-            let startVulkan = document.getElementById('startVulkan').checked;
 
             errorMsg.innerHTML = "";
             submitLogin.classList.add('disabled');
             loadingIcon.style.display = "initial";
 
-            ipcRenderer.send('launchGame', startVulkan);
+            ipcRenderer.send('launchGame');
         }
 
         ipcRenderer.on('launchGameRes', (event, err) => {
@@ -458,7 +454,7 @@
         function toggleProxy(event) {
             let proxyStatus = document.getElementById('proxyStatus');
             let toggleButton = document.getElementById('toggleProxy');
-
+            
             if(proxyRunning) {
                 proxyStatus.style.color = "yellow";
                 proxyStatus.innerHTML = "Stopping...";
@@ -551,7 +547,7 @@
             contents.scrollTop = contents.scrollHeight;
         });
 
-        /*ipcRenderer.on('promotionBannerInfo', (event, promo) => {
+        ipcRenderer.on('promotionBannerInfo', (event, promo) => {
             let promotionBanner = document.getElementById('promotionBanner');
             let promotionTitle = document.getElementById('promotionTitle');
             let promotionBody = document.getElementById('promotionBody');
@@ -567,7 +563,7 @@
             };
 
             promotionBanner.style.display = 'initial';
-        });*/
+        });
     </script>
 </body>
 </html>
