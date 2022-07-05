@@ -14,7 +14,7 @@ const KEYTAR_SERVICE_NAME = "islanlauncher";
 let MessageListener;
 let loginData;
 let gameStr;
-let patcherWay = 0;
+let patcherWay = 1;
 let win;
 let proxy;
 let legacyInstaller = (process.argv.includes("--MT_LEGACY_INSTALLER"));
@@ -43,10 +43,8 @@ function createWindow () {
             case "ticket": {
                 loginController.getServerInfo(loginData.token).then((data) => {
                     gameStr = data;
-                    console.log(gameStr)
                     tl.sendMessageToClient('ticket', `{"ticket": "${JSON.parse(gameStr).ticket}", "result-code": 200}`);
                 }).catch((err) => {
-                    console.log(err + ' killed')
                     tl.sendMessageToClient('ticket', '{"result-code": 0, "result-message": "No handler"}');
                 });
                 break;
