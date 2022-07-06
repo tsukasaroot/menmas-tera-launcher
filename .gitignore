@@ -1,4 +1,3 @@
-build/*
 Client/*
 node_modules/*
 release/*
@@ -7,3 +6,4 @@ MTLUpdater.exe
 mtl.ini
 TeraToolbox Private
 ShinraMeterV2.96
+config.json

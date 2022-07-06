@@ -1,6 +1,6 @@
 const ffi = require('ffi-napi');
 
-const SLS_URL = "http://tera.digitalsavior.fr/server/serverlist.uk";
+const SLS_URL = "http://tera.digitalsavior.fr/server/serverlist.";
 
 const teraLauncher = ffi.Library('./Teralauncher.dll', {
     'LaunchGame': [
@@ -20,8 +20,8 @@ function registerMessageListener(listener) {
     return cb;
 }
 
-function launchGame(gamestr, cb) {
-    teraLauncher.LaunchGame.async(SLS_URL, gamestr, cb);
+function launchGame(gamestr, lang, cb) {
+    teraLauncher.LaunchGame.async(SLS_URL + lang, gamestr, cb);
 }
 
 function launchGameSync(gamestr) {

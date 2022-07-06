@@ -9,6 +9,18 @@ const tl = require('./launcher');
 const patcher = require('./patcher');
 const installer = require('./installer');
 
+const config = (function() {
+    try {
+        return require('./config.json');
+    } catch (e) {
+        let defaultCfg = {
+            gameLang: "uk"
+        };
+        fs.writeFileSync('config.json', JSON.stringify(defaultCfg, null, 4));
+        return defaultCfg;
+    }
+})();
+
 const KEYTAR_SERVICE_NAME = "islanlauncher";
 
 let MessageListener;
@@ -21,8 +33,8 @@ let legacyInstaller = (process.argv.includes("--MT_LEGACY_INSTALLER"));
 
 function createWindow () {
     win = new BrowserWindow({
-        width: 839,
-        height: 530,
+        width: 1280,
+        height: 720,
         transparent: true,
         frame: false,
         resizable: false,
@@ -30,7 +42,7 @@ function createWindow () {
         webPreferences: {
             contextIsolation: true,
             preload: path.join(__dirname, 'preload.js'),
-            devTools: false
+            devTools: true
         }
     });
 
@@ -90,6 +102,8 @@ function createWindow () {
             win.webContents.send('promotionBannerInfo', response.data);
         }).catch((err) => { console.error(err.message) });
 
+        win.webContents.send('switchLanguage', config.gameLang);
+
         patcher.checkForUpdates(win);
         if(legacyInstaller || fs.existsSync(path.join(process.cwd(), 'Client/build.json'))) {
             //patcher.checkForUpdates(win);
@@ -139,6 +153,12 @@ function log(msg, type) {
     win.webContents.send('console-log', msg, type);
 }
 
+ipcMain.on('switchLanguage', (event, lang) => {
+    config.gameLang = lang;
+    fs.writeFileSync('config.json', JSON.stringify(config, null, 4));
+    win.webContents.send('switchLanguage', lang);
+});
+
 ipcMain.on('loginRequest', async (event, username, password, rememberMe) => {
     try {
         if(loginData && loginData.username === username && password === "password") {
@@ -178,7 +198,7 @@ ipcMain.on('launchGame', async (event) => {
 
         event.reply('launchGameRes', null);
 
-        tl.launchGame(gameStr, (err) => {
+        tl.launchGame(gameStr, config.gameLang,(err) => {
             if(err) throw err;
             event.reply('exitGame');
         });

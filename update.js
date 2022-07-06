@@ -85,7 +85,7 @@ async function checkForUpdatesAndDownload() {
                         updateStatus('Installing update...');
 
                         fstream.close(() => {
-                            startProcess('update-cache\\' + manifest.path, "\"Menma's TERA.exe\"");
+                            startProcess('update-cache\\' + manifest.path, "\"Launcher.exe\"");
                             win.close();
                         });
                     } else throw new Error(`Integrity verification failed. Expected hash ${manifest.hash}, got ${sha256}.`);

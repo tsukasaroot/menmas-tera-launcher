@@ -1,7 +1,7 @@
 {
-  "name": "menmas-tera-launcher",
-  "version": "1.4.6",
-  "description": "Menma's TERA Launcher",
+  "name": "isla-tera-launcher",
+  "version": "1.4.8",
+  "description": "Isla's Tera Launcher",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -22,7 +22,7 @@
     "unzipper": "^0.10.11"
   },
   "build": {
-    "productName": "Menma's TERA",
+    "productName": "Launcher",
     "appId": "com.menmasystems.mtl",
     "directories": {
       "output": "release"
@@ -37,7 +37,7 @@
         "zip",
         "nsis"
       ],
-      "artifactName": "MenmasTeraInstaller.${ext}",
+      "artifactName": "Launcher.${ext}",
       "extraFiles": [
         "Teralauncher.dll",
         "MTLUpdater.exe",
