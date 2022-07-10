@@ -6,6 +6,20 @@ const algo = 'sha1';
 
 let results = {'entries': []};
 
+function clean(p) {
+    p = p.split('\\')
+
+    for (let i = 0; i < p.length; i++) {
+        if (p[i] === 'Client')
+            break;
+        p.shift();
+        i--;
+    }
+
+    p = p.join('\\');
+    return p;
+}
+
 function walk(dir, p) {
     dir = fs.readdirSync(dir);
 
@@ -13,14 +27,14 @@ function walk(dir, p) {
         const stat = fs.lstatSync(path.join(p, dir[i]));
         if (stat.isDirectory()) {
             results.entries.push({
-                'file': path.join(p, dir[i]),
+                'file': path.join(clean(p), dir[i]),
                 'directory': true
             });
             walk(path.join(p, dir[i]), path.join(p, dir[i]));
         } else {
             let file_content = fs.readFileSync(path.join(p, dir[i]));
             results.entries.push({
-                'file': path.join(p, dir[i]),
+                'file': path.join(clean(p), dir[i]),
                 'sha1': crypto.createHash(algo).update(file_content).digest('hex'),
                 'directory': false,
                 'size': fs.statSync(path.join(p, dir[i])).size
@@ -29,5 +43,7 @@ function walk(dir, p) {
     }
 }
 
-walk('Client', 'Client');
+let p = process.argv[2];
+
+walk(p, p);
 fs.writeFileSync('download', JSON.stringify(results), 'utf-8');
