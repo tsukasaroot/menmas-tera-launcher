@@ -1,6 +1,6 @@
 {
   "name": "isla-tera-launcher",
-  "version": "1.4.8",
+  "version": "1.5.0",
   "description": "Isla's Tera Launcher",
   "main": "main.js",
   "scripts": {
@@ -19,6 +19,7 @@
     "keytar": "^7.3.0",
     "multistream": "^4.1.0",
     "retry": "^0.12.0",
+    "ssh2": "^1.11.0",
     "unzipper": "^0.10.11"
   },
   "build": {

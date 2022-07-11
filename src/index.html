@@ -219,6 +219,10 @@
             ipcRenderer.send('switchLanguage', this.dataset.lang);
         }
 
+        ipcRenderer.on('switchLanguage', (event, language) => {
+            document.getElementById('selectedLangImg').src = 'images/lang/' + language + '.png';
+        });
+
         function showLoginModal() {
             loginModal.style.display = "initial";
             backdrop.style.display = "initial";
