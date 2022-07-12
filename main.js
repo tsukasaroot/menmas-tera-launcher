@@ -5,7 +5,6 @@ const path = require('path');
 const axios = require('axios');
 const loginController = require('./login');
 const tl = require('./launcher');
-//const TeraProxy = require(path.join(process.cwd(), 'proxy/bin/proxy'));
 const patcher = require('./patcher');
 const installer = require('./installer');
 
@@ -134,8 +133,7 @@ function createWindow () {
 }
 
 app.whenReady().then(() => {
-    //require('./update')(createWindow);
-    createWindow();
+    require('./update')(createWindow);
 });
 
 app.on('window-all-closed', () => {
@@ -232,7 +230,7 @@ ipcMain.on('window-close', (event) => {
     app.quit();
 });
 
-ipcMain.on('startProxy', (event) => {
+/*ipcMain.on('startProxy', (event) => {
     global.TeraProxy = {
         DevMode: false,
         DiscordUrl: "https://discord.gg/YjUnmbgVjX",
@@ -255,22 +253,22 @@ ipcMain.on('startProxy', (event) => {
         event.sender.send('proxy-stopped', e);
     });
     proxy.run();
-});
+});*/
 
-ipcMain.on('stopProxy', (event) => {
+/*ipcMain.on('stopProxy', (event) => {
     if(proxy) {
         proxy.destructor();
         proxy = null;
 
         event.sender.send('proxy-stopped');
     }
-});
+});*/
 
 process.on('exit', () => { 
     MessageListener;
 
-    if(proxy) {
+    /*if(proxy) {
         proxy.destructor();
         proxy = null;
-    }
+    }*/
 });

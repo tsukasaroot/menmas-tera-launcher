@@ -32,13 +32,17 @@ function walk(dir, p) {
             });
             walk(path.join(p, dir[i]), path.join(p, dir[i]));
         } else {
-            let file_content = fs.readFileSync(path.join(p, dir[i]));
-            results.entries.push({
-                'file': path.join(clean(p), dir[i]),
-                'sha1': crypto.createHash(algo).update(file_content).digest('hex'),
-                'directory': false,
-                'size': fs.statSync(path.join(p, dir[i])).size
-            });
+            if (dir[i] !== 'build.json') {
+                let file_content = fs.readFileSync(path.join(p, dir[i]));
+                results.entries.push({
+                    'file': path.join(clean(p), dir[i]),
+                    'sha1': crypto.createHash(algo).update(file_content).digest('hex'),
+                    'directory': false,
+                    'size': fs.statSync(path.join(p, dir[i])).size
+                });
+            } else {
+                console.log('Ignored file encountered ' + dir[i])
+            }
         }
     }
 }
@@ -46,4 +50,5 @@ function walk(dir, p) {
 let p = process.argv[2];
 
 walk(p, p);
+results.buildVersion = 1000;
 fs.writeFileSync('download', JSON.stringify(results), 'utf-8');

@@ -68,7 +68,7 @@ async function checkForUpdates(win, skipCheck = false) {
                 if(!fs.existsSync(entry.file))
                     fs.mkdirSync(entry.file, { recursive: true });
                 continue;
-            };
+            }
 
             if(downloadedFiles[entry.file] && !skipCheck) {
                 if(downloadedFiles[entry.file] !== entry.sha1) {
@@ -137,6 +137,7 @@ async function downloadFiles(win) {
                     }
 
                     operation.attempt(function() {
+                        console.log(`/${path.replaceAll('\\', '/')}`);
                         agent.get(`/${path.replaceAll('\\', '/')}`, { cancelToken: cancellationSource.token }).then((response) => {
                             let fstream = fs.createWriteStream(path, { mode: 0o777 });
                             let thisDownloadedSize = 0;
@@ -194,7 +195,7 @@ function getLatestBuildVersion() {
         axios.get(PATCH_URL + '/latest')
         .then((response) => {
             if(response.status === 200) {
-                resolve(response.data.latest);
+                resolve(response.data);
             } else {
                 reject(response.status + ": " + response.statusText);
             }

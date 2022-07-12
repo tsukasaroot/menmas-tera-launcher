@@ -1,1 +1,0 @@
-Custom packet structure definition (`*.def` / `*.js`) files go here.
