@@ -105,13 +105,13 @@ function createWindow () {
         win.webContents.send('switchLanguage', config.gameLang);
 
         patcher.checkForUpdates(win);
-        if(legacyInstaller || fs.existsSync(path.join(process.cwd(), 'Client/build.json'))) {
+        /*if(legacyInstaller || fs.existsSync(path.join(process.cwd(), 'Client/build.json'))) {
             //patcher.checkForUpdates(win);
             patcherWay = 1;
         } else {
             //installer.startInstallation(win, () => { patcher.checkForUpdates(win, true) });
             //patcherWay = 2;
-        }
+        }*/
     });
 
     // Redirect console to built-in one
@@ -134,7 +134,8 @@ function createWindow () {
 }
 
 app.whenReady().then(() => {
-    require('./update')(createWindow);
+    //require('./update')(createWindow);
+    createWindow();
 });
 
 app.on('window-all-closed', () => {

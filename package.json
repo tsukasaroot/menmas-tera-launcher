@@ -1,6 +1,6 @@
 {
   "name": "isla-tera-launcher",
-  "version": "1.5.0",
+  "version": "1.5.2",
   "description": "Isla's Tera Launcher",
   "main": "main.js",
   "scripts": {
