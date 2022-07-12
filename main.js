@@ -97,9 +97,9 @@ function createWindow () {
             console.error(err);
         });
 
-        axios.get('https://account.menmastera.com/api/v1/launcher/retrieve_promo_info').then((response) => {
+        /*axios.get('https://account.menmastera.com/api/v1/launcher/retrieve_promo_info').then((response) => {
             win.webContents.send('promotionBannerInfo', response.data);
-        }).catch((err) => { console.error(err.message) });
+        }).catch((err) => { console.error(err.message) });*/
 
         win.webContents.send('switchLanguage', config.gameLang);
 

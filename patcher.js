@@ -137,7 +137,6 @@ async function downloadFiles(win) {
                     }
 
                     operation.attempt(function() {
-                        console.log(`/${path.replaceAll('\\', '/')}`);
                         agent.get(`/${path.replaceAll('\\', '/')}`, { cancelToken: cancellationSource.token }).then((response) => {
                             let fstream = fs.createWriteStream(path, { mode: 0o777 });
                             let thisDownloadedSize = 0;
