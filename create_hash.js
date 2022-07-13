@@ -26,10 +26,12 @@ function walk(dir, p) {
     for (let i = 0; i < dir.length; i++) {
         const stat = fs.lstatSync(path.join(p, dir[i]));
         if (stat.isDirectory()) {
-            results.entries.push({
-                'file': path.join(clean(p), dir[i]),
-                'directory': true
-            });
+            if (dir[i] !== '.idea') {
+                results.entries.push({
+                    'file': path.join(clean(p), dir[i]),
+                    'directory': true
+                });
+            }
             walk(path.join(p, dir[i]), path.join(p, dir[i]));
         } else {
             if (dir[i] !== 'build.json') {
