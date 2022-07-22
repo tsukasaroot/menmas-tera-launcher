@@ -8,6 +8,8 @@ const tl = require('./launcher');
 const patcher = require('./patcher');
 const installer = require('./installer');
 
+const gotTheLock = app.requestSingleInstanceLock()
+
 const config = (function() {
     try {
         return require('./config.json');
@@ -44,6 +46,17 @@ function createWindow () {
             devTools: true
         }
     });
+
+    if (!gotTheLock) {
+        app.quit()
+    } else {
+        app.on('second-instance', (event, commandLine, workingDirectory) => {
+            if (win) {
+                if (win.isMinimized()) win.restore()
+                win.focus()
+            }
+        })
+    }
 
     win.loadFile('src/index.html');
 
