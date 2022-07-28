@@ -1,15 +1,7 @@
+const fs = require('fs');
 const { app, BrowserWindow, ipcMain } = require('electron');
 const keytar = require('keytar');
-const fs = require('fs');
 const path = require('path');
-const axios = require('axios');
-const loginController = require('./login');
-const tl = require('./launcher');
-const patcher = require('./patcher');
-const installer = require('./installer');
-
-const gotTheLock = app.requestSingleInstanceLock()
-
 const config = (function() {
     try {
         return require('./config.json');
@@ -25,6 +17,12 @@ const config = (function() {
         return defaultCfg;
     }
 })();
+const loginController = require('./login');
+const tl = require('./launcher');
+const patcher = require('./patcher');
+const installer = require('./installer');
+
+const gotTheLock = app.requestSingleInstanceLock()
 
 const KEYTAR_SERVICE_NAME = "islanlauncher";
 
@@ -114,20 +112,9 @@ function createWindow () {
             console.error(err);
         });
 
-        /*axios.get('https://account.menmastera.com/api/v1/launcher/retrieve_promo_info').then((response) => {
-            win.webContents.send('promotionBannerInfo', response.data);
-        }).catch((err) => { console.error(err.message) });*/
-
         win.webContents.send('switchLanguage', config.gameLang);
 
         patcher.checkForUpdates(win);
-        /*if(legacyInstaller || fs.existsSync(path.join(process.cwd(), 'Client/build.json'))) {
-            //patcher.checkForUpdates(win);
-            patcherWay = 1;
-        } else {
-            //installer.startInstallation(win, () => { patcher.checkForUpdates(win, true) });
-            //patcherWay = 2;
-        }*/
     });
 
     // Redirect console to built-in one
@@ -250,45 +237,6 @@ ipcMain.on('window-close', (event) => {
     app.quit();
 });
 
-/*ipcMain.on('startProxy', (event) => {
-    global.TeraProxy = {
-        DevMode: false,
-        DiscordUrl: "https://discord.gg/YjUnmbgVjX",
-        SupportUrl: "https://discord.gg/YjUnmbgVjX",
-        GUIMode: false,
-        IsAdmin: true
-    };
-
-    let DataFolder = path.join(process.cwd(), 'proxy', 'data');
-    let ModuleFolder = path.join(process.cwd(), 'proxy', 'mods');
-
-    proxy = new TeraProxy(ModuleFolder, DataFolder, {
-        uilanguage: 'en',
-        devmode: false,
-        noslstags: true,
-        noserverautojoin: false
-    }, () => {
-        event.sender.send('proxy-running', proxy.modManager.failedMods);
-    }, (e) => {
-        event.sender.send('proxy-stopped', e);
-    });
-    proxy.run();
-});*/
-
-/*ipcMain.on('stopProxy', (event) => {
-    if(proxy) {
-        proxy.destructor();
-        proxy = null;
-
-        event.sender.send('proxy-stopped');
-    }
-});*/
-
 process.on('exit', () => { 
     MessageListener;
-
-    /*if(proxy) {
-        proxy.destructor();
-        proxy = null;
-    }*/
 });

@@ -4,7 +4,21 @@ const axios = require('axios');
 const http = require('http');
 const https = require('https');
 const retry = require('retry');
-const config = require('./config.json');
+const config = (function() {
+    try {
+        return require('./config.json');
+    } catch (e) {
+        let defaultCfg = {
+            gameLang: "uk",
+            patcher_url: "http://api.digitalsavior.fr",
+            login_url: "http://api.digitalsavior.fr",
+            selfupdate_url: "http://api.digitalsavior.fr/launcher/",
+            activate_selfupdate: true
+        };
+        fs.writeFileSync('config.json', JSON.stringify(defaultCfg, null, 4));
+        return defaultCfg;
+    }
+})();
 
 const MAX_DOWNLOAD_SPEED_VALUES = 10;
 const PATCH_URL = config.patcher_url;
