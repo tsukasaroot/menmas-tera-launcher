@@ -1,22 +1,16 @@
-const { BrowserWindow } = require('electron');
+const {BrowserWindow, app} = require('electron');
 const axios = require('axios');
 const http = require('http');
 const fs = require('fs');
 const crypto = require('crypto');
-const { spawn } = require('child_process');
-const config = (function() {
+const {spawn} = require('child_process');
+const path = require("path");
+
+const config = (() => {
     try {
-        return require('./config.json');
+        return require("./config.json");
     } catch (e) {
-        let defaultCfg = {
-            gameLang: "uk",
-            patcher_url: "http://api.digitalsavior.fr",
-            login_url: "http://api.digitalsavior.fr",
-            selfupdate_url: "http://api.digitalsavior.fr/launcher/",
-            activate_selfupdate: true
-        };
-        fs.writeFileSync('config.json', JSON.stringify(defaultCfg, null, 4));
-        return defaultCfg;
+        return require("../../config.json");
     }
 })();
 
@@ -51,11 +45,11 @@ function createWindow(cb) {
 async function checkForUpdatesAndDownload() {
     updateStatus('Checking for updates...');
 
-    if(fs.existsSync('./MTLUpdater.exe.bak'))
+    if (fs.existsSync('./MTLUpdater.exe.bak'))
         fs.unlinkSync('./MTLUpdater.exe.bak');
 
-    if(fs.existsSync('./update-cache')) {
-        fs.rmdirSync('./update-cache', { recursive: true });
+    if (fs.existsSync('./update-cache')) {
+        fs.rmdirSync('./update-cache', {recursive: true});
     }
 
     try {
@@ -64,7 +58,7 @@ async function checkForUpdatesAndDownload() {
 
         let version = fs.readFileSync('./version.txt', 'utf-8');
 
-        if(version === manifest.version) {
+        if (version === manifest.version) {
             finishCallback();
             win.close();
             return;
@@ -75,7 +69,7 @@ async function checkForUpdatesAndDownload() {
         fs.mkdirSync('./update-cache');
         let fstream = fs.createWriteStream('./update-cache/' + manifest.path);
         http.get(UPDATE_URL + manifest.path, (res) => {
-            if(res.statusCode === 200) {
+            if (res.statusCode === 200) {
                 res.pipe(fstream);
                 let total = Number(res.headers['content-length']);
                 let received = 0;
@@ -91,12 +85,12 @@ async function checkForUpdatesAndDownload() {
             }
 
             fstream.on('finish', () => {
-                if(res.complete) {
+                if (res.complete) {
                     updateStatus('Verifying integrity...');
 
                     let sha256 = crypto.createHash('sha256').update(fs.readFileSync('./update-cache/' + manifest.path)).digest('hex');
 
-                    if(sha256 === manifest.hash) {
+                    if (sha256 === manifest.hash) {
                         updateStatus('Installing update...');
 
                         fstream.close(() => {
@@ -114,7 +108,7 @@ async function checkForUpdatesAndDownload() {
         updateStatus('Failed to update. Starting launcher...');
         console.error(e);
 
-        setTimeout(function() {
+        setTimeout(function () {
             finishCallback();
             win.close();
         }, 5000);
@@ -122,7 +116,10 @@ async function checkForUpdatesAndDownload() {
 }
 
 function startProcess(archivePath, launcherPath) {
-    let child = spawn('start "MTL Updater"', ['MTLUpdater.exe', archivePath, launcherPath], { detached: true, shell: true });
+    let child = spawn('start "MTL Updater"', ['MTLUpdater.exe', archivePath, launcherPath], {
+        detached: true,
+        shell: true
+    });
     child.unref();
 }
 

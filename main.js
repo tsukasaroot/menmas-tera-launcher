@@ -1,26 +1,31 @@
 const fs = require('fs');
-const { app, BrowserWindow, ipcMain } = require('electron');
+const {app, BrowserWindow, ipcMain} = require('electron');
 const keytar = require('keytar');
 const path = require('path');
-const config = (function() {
-    try {
-        return require('./config.json');
-    } catch (e) {
-        let defaultCfg = {
-            gameLang: "uk",
-            patcher_url: "http://api.digitalsavior.fr",
-            login_url: "http://api.digitalsavior.fr",
-            selfupdate_url: "http://api.digitalsavior.fr/launcher/",
-            activate_selfupdate: true
-        };
-        fs.writeFileSync('config.json', JSON.stringify(defaultCfg, null, 4));
-        return defaultCfg;
-    }
-})();
 const loginController = require('./login');
 const tl = require('./launcher');
 const patcher = require('./patcher');
 const installer = require('./installer');
+
+const config = (function () {
+    try {
+        return require('./config.json');
+    } catch (e) {
+        try {
+            return require("../../config.json");
+        } catch (e) {
+            let defaultCfg = {
+                gameLang: "uk",
+                patcher_url: "http://api.digitalsavior.fr",
+                login_url: "http://api.digitalsavior.fr",
+                selfupdate_url: "http://api.digitalsavior.fr/launcher/",
+                activate_selfupdate: true
+            };
+            fs.writeFileSync('config.json', JSON.stringify(defaultCfg, null, 4));
+            return defaultCfg;
+        }
+    }
+})();
 
 const gotTheLock = app.requestSingleInstanceLock()
 
@@ -31,10 +36,8 @@ let loginData;
 let gameStr;
 let patcherWay = 1;
 let win;
-let proxy;
-let legacyInstaller = (process.argv.includes("--MT_LEGACY_INSTALLER"));
 
-function createWindow () {
+function createWindow() {
     win = new BrowserWindow({
         width: 1280,
         height: 720,
@@ -64,8 +67,8 @@ function createWindow () {
 
     MessageListener = tl.registerMessageListener((message, code) => {
         //console.log(`Received message: ${message}(${code})`);
-    
-        switch(message) {
+
+        switch (message) {
             case "ticket": {
                 loginController.getServerInfo(loginData.token).then((data) => {
                     gameStr = data;
@@ -101,7 +104,7 @@ function createWindow () {
 
     win.webContents.on('dom-ready', async () => {
         keytar.findCredentials(KEYTAR_SERVICE_NAME).then((result) => {
-            if(result[0]) {
+            if (result[0]) {
                 loginData = {
                     username: result[0].account,
                     token: result[0].password
@@ -129,9 +132,9 @@ function createWindow () {
     const old_stderr = process.stderr.write;
     process.stderr.write = function (msg, ...args) {
         old_stderr(msg, ...args);
-        if(msg.startsWith("warn:"))
+        if (msg.startsWith("warn:"))
             log(msg.replace("warn:", ""), "warn");
-        else 
+        else
             log(msg, "error");
     };
 }
@@ -167,19 +170,19 @@ ipcMain.on('switchLanguage', (event, lang) => {
 
 ipcMain.on('loginRequest', async (event, username, password, rememberMe) => {
     try {
-        if(loginData && loginData.username === username && password === "password") {
+        if (loginData && loginData.username === username && password === "password") {
             event.reply('loginResponse', null, username, true);
             return;
         }
 
         let result = await loginController.login(username, password);
-        if(loginData) {
+        if (loginData) {
             loginController.logout(loginData.token);
             keytar.deletePassword(KEYTAR_SERVICE_NAME, loginData.username);
         }
         loginData = Object.assign({}, result);
 
-        if(rememberMe) {
+        if (rememberMe) {
             keytar.setPassword(KEYTAR_SERVICE_NAME, result.username, result.token);
         }
 
@@ -204,8 +207,8 @@ ipcMain.on('launchGame', async (event) => {
 
         event.reply('launchGameRes', null);
 
-        tl.launchGame(gameStr, config.gameLang,(err) => {
-            if(err) throw err;
+        tl.launchGame(gameStr, config.gameLang, (err) => {
+            if (err) throw err;
             event.reply('exitGame');
         });
     } catch (err) {
@@ -214,12 +217,14 @@ ipcMain.on('launchGame', async (event) => {
 });
 
 ipcMain.on('patch-paused-state', (event, paused) => {
-    if(paused) {
-        if(patcherWay == 1) patcher.pauseDownload();
-        else if(patcherWay == 2) installer.pauseDownload();
+    if (paused) {
+        if (patcherWay == 1) patcher.pauseDownload();
+        else if (patcherWay == 2) installer.pauseDownload();
     } else {
-        if(patcherWay == 1) patcher.downloadFiles(win);
-        else if(patcherWay == 2) installer.startInstallation(win, () => { patcher.checkForUpdates(win, true) });
+        if (patcherWay == 1) patcher.downloadFiles(win);
+        else if (patcherWay == 2) installer.startInstallation(win, () => {
+            patcher.checkForUpdates(win, true)
+        });
     }
 });
 
@@ -237,6 +242,6 @@ ipcMain.on('window-close', (event) => {
     app.quit();
 });
 
-process.on('exit', () => { 
+process.on('exit', () => {
     MessageListener;
 });
