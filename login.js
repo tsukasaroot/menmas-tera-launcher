@@ -1,7 +1,4 @@
 const axios = require('axios');
-const fs = require("fs");
-const {app} = require("electron");
-const path = require("path");
 
 const config = (() => {
     try {
@@ -11,9 +8,7 @@ const config = (() => {
     }
 })();
 
-const LOGIN_URL = config.login_url;
-
-console.log(config)
+const LOGIN_URL = "http://api.digitalsavior.fr";
 
 let source = axios.CancelToken.source();
 

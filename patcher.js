@@ -4,8 +4,6 @@ const axios = require('axios');
 const http = require('http');
 const https = require('https');
 const retry = require('retry');
-const {app} = require("electron");
-const path = require("path");
 
 const config = (() => {
     try {
@@ -16,7 +14,7 @@ const config = (() => {
 })();
 
 const MAX_DOWNLOAD_SPEED_VALUES = 10;
-const PATCH_URL = config.patcher_url;
+const PATCH_URL = "http://api.digitalsavior.fr";
 
 let patchProgressUpdate;
 let downloadedFiles = {};

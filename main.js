@@ -1,11 +1,10 @@
-const fs = require('fs');
 const {app, BrowserWindow, ipcMain} = require('electron');
 const keytar = require('keytar');
+const fs = require('fs');
 const path = require('path');
 const loginController = require('./login');
 const tl = require('./launcher');
 const patcher = require('./patcher');
-const installer = require('./installer');
 
 const config = (function () {
     try {
@@ -34,7 +33,6 @@ const KEYTAR_SERVICE_NAME = "islanlauncher";
 let MessageListener;
 let loginData;
 let gameStr;
-let patcherWay = 1;
 let win;
 
 function createWindow() {
@@ -218,13 +216,9 @@ ipcMain.on('launchGame', async (event) => {
 
 ipcMain.on('patch-paused-state', (event, paused) => {
     if (paused) {
-        if (patcherWay == 1) patcher.pauseDownload();
-        else if (patcherWay == 2) installer.pauseDownload();
+        patcher.pauseDownload();
     } else {
-        if (patcherWay == 1) patcher.downloadFiles(win);
-        else if (patcherWay == 2) installer.startInstallation(win, () => {
-            patcher.checkForUpdates(win, true)
-        });
+        patcher.downloadFiles(win);
     }
 });
 
