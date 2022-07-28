@@ -4,8 +4,9 @@ const http = require('http');
 const fs = require('fs');
 const crypto = require('crypto');
 const { spawn } = require('child_process');
+const config = require('./config.json');
 
-const UPDATE_URL = "http://api.digitalsavior.fr/launcher/";
+const UPDATE_URL = config.selfupdate_url;
 
 let win;
 let finishCallback;
