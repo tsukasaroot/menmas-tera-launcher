@@ -43,7 +43,8 @@
       "extraFiles": [
         "Teralauncher.dll",
         "MTLUpdater.exe",
-        "version.txt"
+        "version.txt",
+        "config.json"
       ],
       "publisherName": "Menma",
       "verifyUpdateCodeSignature": false,

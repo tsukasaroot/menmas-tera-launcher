@@ -13,7 +13,7 @@ const config = (() => {
     }
 })();
 
-const UPDATE_URL = "http://api.digitalsavior.fr/launcher/";
+const UPDATE_URL = config.selfupdate_url;
 
 let win;
 let finishCallback;

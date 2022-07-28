@@ -14,7 +14,7 @@ const config = (() => {
 })();
 
 const MAX_DOWNLOAD_SPEED_VALUES = 10;
-const PATCH_URL = "http://api.digitalsavior.fr";
+const PATCH_URL = config.patcher_url;
 
 let patchProgressUpdate;
 let downloadedFiles = {};

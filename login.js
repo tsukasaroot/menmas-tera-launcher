@@ -8,7 +8,7 @@ const config = (() => {
     }
 })();
 
-const LOGIN_URL = "http://api.digitalsavior.fr";
+const LOGIN_URL = config.login_url;
 
 let source = axios.CancelToken.source();
 
