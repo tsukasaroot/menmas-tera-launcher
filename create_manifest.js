@@ -15,3 +15,5 @@ fs.writeFileSync(outputPath, JSON.stringify({
     path: "Launcher.zip",
     hash
 }, null, 4));
+
+console.log('Manifest created');
